@@ -165,6 +165,8 @@ export interface ProjectEntry {
   tags: string[];
   icon: string;
   featuredImage?: string;
+  sliderImage?: string;
+  sliderOrder?: number;
   backgroundImage?: string;
   link: string;
   colorIcon?: string;
