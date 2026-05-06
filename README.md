@@ -3,6 +3,7 @@
 Portfolio template built with Astro. All your content lives in simple JSON files. Edit them, run a build command, and your finished static site lands in `./output/` ready on github pages, gitlab pages, upload anywhere.
 
 ---
+## Is This Theme For You?
 
 | Feature                | Details                                                               |
 | ---------------------- | --------------------------------------------------------------------- |
