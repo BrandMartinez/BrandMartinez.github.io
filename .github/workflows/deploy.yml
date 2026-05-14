@@ -1,12 +1,24 @@
 name: Deploy to GitHub Pages
 
 on:
-  # Uncomment the lines below to automatically deploy on every push to main:
-  # push:
-  #   branches: [main]
+  # Manual trigger:
+  #
+  # Hey! Did you want to run this and make/build your site?
+  # Go to Actions. The workflow is set for manual trigger.
+  # Actions → Deploy to GitHub Pages (button on left side)
+  # Run workflow (button on right side) → Run workflow
+  # Congratulations on your new website!
 
-  # Manual trigger: run this workflow from Actions → Run workflow in GitHub.
   workflow_dispatch:
+
+  # Auto-deploy:
+  #
+  # If you'd rather have the site rebuild and redeploy automatically
+  # every time you push a change, uncomment the three lines below.
+  # Just remove the leading '#' from each of the three lines.
+  #
+  #push:
+  #  branches: [main]
 
 permissions:
   contents: read
@@ -27,7 +39,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -76,4 +88,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
