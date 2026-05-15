@@ -1,5 +1,6 @@
 {
   "extends": "astro/tsconfigs/strict",
+  "exclude": ["public"],
   "compilerOptions": {
     "strictNullChecks": true,
     "resolveJsonModule": true,
@@ -10,4 +11,3 @@
     }
   }
 }
-
