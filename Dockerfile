@@ -1,20 +1,21 @@
 # ── Stage 1: Dependencies ─────────────────────────────────────────────────────
 # Cached independently from source — only re-runs when package files change
-FROM node:22-slim AS deps
+FROM node:24-alpine AS deps
+RUN npm install -g pnpm@11 --silent
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm install --frozen-lockfile
 
 # ── Stage 2: Lint ────────────────────────────────────────────────────────────
 # Fails the build if ESLint violations are found
 FROM deps AS lint
 COPY . .
-RUN npm run lint
+RUN pnpm run lint
 
 # ── Stage 3: Type check ──────────────────────────────────────────────────────
 # Fails the build if TypeScript/Astro type errors are found
 FROM lint AS typecheck
-RUN npm run typecheck
+RUN pnpm run typecheck
 
 # ── Stage 4: Builder (default target) ───────────────────────────────────────
 # DEFAULT WORKFLOW — this is all you need 90% of the time.
@@ -26,7 +27,7 @@ FROM typecheck AS builder
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["npm", "run", "build"]
+CMD ["pnpm", "run", "build"]
 
 # ── Stage 5: Static build for nginx ─────────────────────────────────────────
 # OPTIONAL — only built when targeting the nginx server stage.
@@ -36,7 +37,7 @@ CMD ["npm", "run", "build"]
 FROM typecheck AS build-static
 RUN --mount=type=secret,id=github_token_password \
     export GITHUB_TOKEN=$(cat /run/secrets/github_token_password 2>/dev/null || true) && \
-    npm run build
+    pnpm run build
 
 # ── Stage 6: Nginx server ───────────────────────────────────────────────────
 # OPTIONAL — lean production image; no Node, no source, just nginx + dist/.
