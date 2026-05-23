@@ -1,6 +1,5 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
-import sitemap from '@astrojs/sitemap';
 
 // base: './' is broken in Astro 6: prependForwardSlash() in vite-plugin-assets.ts
 // always prepends '/', turning './' into '/.' and making BASE_URL = '/.'.
@@ -23,9 +22,7 @@ export default defineConfig({
   // 'attribute' scopes component styles via data-astro-* attributes instead of mangled class names,
   // which is more predictable when targeting elements from global CSS or JavaScript.
   scopedStyleStrategy: 'attribute',
-  integrations: [
-    ...(process.env.SITE_URL ? [sitemap()] : []),
-  ],
+  integrations: [],
   // Global Sharp codec defaults for all processed images.
   // Per-image `quality` props still override these.
   image: {
