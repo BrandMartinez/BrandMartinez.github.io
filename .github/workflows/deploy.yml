@@ -66,63 +66,62 @@ jobs:
             exit 1
           fi
           echo "GitHub Pages source is correctly set to GitHub Actions."
-  build:
-  needs: preflight
-  runs-on: ubuntu-latest
+    build:
+    needs: preflight
+    runs-on: ubuntu-latest
 
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup Node
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        cache: pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
 
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
 
-    - name: Setup Pages
-      id: pages
-      uses: actions/configure-pages@v5
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-    - name: Resolve base path
-      run: |
-        OWNER="${GITHUB_REPOSITORY_OWNER}"
-        REPO="${GITHUB_REPOSITORY#*/}"
+      - name: Resolve base path
+        run: |
+          OWNER="${GITHUB_REPOSITORY_OWNER}"
+          REPO="${GITHUB_REPOSITORY#*/}"
 
-        if [ -n "${{ vars.BASE_PATH }}" ]; then
-          echo "BASE_PATH=${{ vars.BASE_PATH }}" >> "$GITHUB_ENV"
-        elif [ "${REPO,,}" = "${OWNER,,}.github.io" ]; then
-          echo "BASE_PATH=/" >> "$GITHUB_ENV"
-        else
-          echo "BASE_PATH=/${REPO}/" >> "$GITHUB_ENV"
-        fi
+          if [ -n "${{ vars.BASE_PATH }}" ]; then
+            echo "BASE_PATH=${{ vars.BASE_PATH }}" >> "$GITHUB_ENV"
+          elif [ "${REPO,,}" = "${OWNER,,}.github.io" ]; then
+            echo "BASE_PATH=/" >> "$GITHUB_ENV"
+          else
+            echo "BASE_PATH=/${REPO}/" >> "$GITHUB_ENV"
+          fi
 
-        if [ -n "${{ vars.SITE_URL }}" ]; then
-          echo "SITE_URL=${{ vars.SITE_URL }}" >> "$GITHUB_ENV"
-        elif [ "${REPO,,}" = "${OWNER,,}.github.io" ]; then
-          echo "SITE_URL=https://${OWNER}.github.io" >> "$GITHUB_ENV"
-        else
-          echo "SITE_URL=https://${OWNER}.github.io/${REPO}" >> "$GITHUB_ENV"
-        fi
+          if [ -n "${{ vars.SITE_URL }}" ]; then
+            echo "SITE_URL=${{ vars.SITE_URL }}" >> "$GITHUB_ENV"
+          elif [ "${REPO,,}" = "${OWNER,,}.github.io" ]; then
+            echo "SITE_URL=https://${OWNER}.github.io" >> "$GITHUB_ENV"
+          else
+            echo "SITE_URL=https://${OWNER}.github.io/${REPO}" >> "$GITHUB_ENV"
+          fi
 
-    - name: Build
-      run: pnpm run build
-      env:
-        SITE_URL: ${{ env.SITE_URL }}
-        BASE_PATH: ${{ env.BASE_PATH }}
-        GITHUB_USER: ${{ vars.GITHUB_USER }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build
+        run: pnpm run build
+        env:
+          SITE_URL: ${{ env.SITE_URL }}
+          BASE_PATH: ${{ env.BASE_PATH }}
+          GITHUB_USER: ${{ vars.GITHUB_USER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Upload Pages artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: dist
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
   deploy:
     needs: build
     runs-on: ubuntu-latest
